@@ -1,0 +1,32 @@
+import numpy as np
+import random
+
+CC = 0
+Cats = "{}"
+DB = {
+    "red": "color",
+    "orange": "color",
+    "lamp": "object",
+    "dog": "animal",
+    "frog": "animal",
+    "bowling ball": "object"
+}
+
+DBC = len(DB.values())
+DBV = np.random.uniform(0, 1, (DBC, 1))
+CGN = len(DB.values())
+CatGrid = np.zeros(CGN, int)
+
+for cat in list(DB.values()):
+    CN = (sum(value == cat for value in DB.values()))
+    CatGrid[CC] = CN
+    CC += 1 
+
+print(CatGrid)
+print(DB)
+
+DC = random.choice(list(DB.keys()))
+del DB[DC]
+print()
+print(DB)
+print(Cats)
