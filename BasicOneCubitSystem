@@ -1,0 +1,79 @@
+from IPython.display import clear_output
+import numpy as np
+import random
+import math
+
+#Misc
+N = 2
+I = np.eye(2, dtype=complex)
+
+#Tensor Up
+St0 = np.array([1+0j, 0+0j])
+St1 = np.array([0+0j, 1+0j])
+QB = [St0 for _ in range(N)]
+St = QB[0]
+for q in QB[1:]:
+    St = np.kron(St, q)
+    
+#Gates
+XGate = np.array([[0+0j, 1+0j],
+                  [1+0j, 0+0j]])
+
+YGate = np.array([[0+0j, -1j],
+                  [1j,   0+0j]])
+
+ZGate = np.array([[1+0j,  0+0j],
+                  [0+0j, -1+0j]])
+
+HGate = np.array([[1/np.sqrt(2)+0j,  1/np.sqrt(2)+0j],
+                  [1/np.sqrt(2)+0j, -1/np.sqrt(2)+0j]])
+
+SGate = np.array([[1+0j, 0+0j],
+                  [0+0j, 0+1j]])
+
+TGate = np.array([[1+0j, 0+0j],
+                  [0+0j, np.exp(1j*np.pi/4)]])
+
+
+
+#Measure
+def Measure(St, N):
+    probs = np.abs(St) ** 2
+    nex = list(range(2**N))
+    res = random.choices(nex, probs, k=1)[0]
+    nex_St = np.zeros(2**N, dtype=complex)
+    nex_St[res] = 1+0j
+    return nex_St
+
+
+#Gater
+def Gater(Gate, T, N, St):
+    res = np.eye(1, dtype=complex)
+    for i in range(N):
+        if i == T:
+            res = np.kron(res, Gate)
+        else:
+            res = np.kron(res, I)
+    return res @ St
+
+
+
+def PrintIt(St, N):
+    for i, amp in enumerate(St):
+        if np.abs(amp) > 1e-10:
+            bits = format(i, f'0{N}b')
+            print(f"|{bits}⟩")
+
+
+##Starts At |00⟩
+#St = Gater(XGate, 0, N, St)
+#St = Gater(YGate, 0, N, St)
+#St = Gater(ZGate, 0, N, St)
+#St = Gater(SGate, 0, N, St)
+#St = Gater(TGate, 0, N, St)
+St = Gater(HGate, 0, N, St)
+
+
+St = Measure(St, N)
+
+PrintIt(St, N)
