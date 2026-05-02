@@ -1,0 +1,76 @@
+from IPython.display import clear_output
+import numpy as np
+import random
+import time
+
+
+X = 1
+Y = 0
+
+
+grid = np.array([[1, 0, 1, 0, 0],
+                [1, 0, 1, 0, 0],
+                [1, 0, 1, 0, 0],
+                [1, 0, 0, 0, 0],
+                [1, 1, 1, 0, 3]])
+
+Pgrid = np.zeros(((len(grid)), len(grid)), int)
+
+def GridUp(Pgrid, grid):
+    grid[3, 2] = random.randint(0,1)
+    for row in range(5):
+        for col in range(5):
+            if grid[col, row] == 0:
+                Pgrid[col, row] = 50
+            elif grid[col, row] == 1:
+                Pgrid[col, row] = 0
+            elif grid[col, row] == 3:
+                Pgrid[col, row] = 75
+
+
+def Ghost(Pgrid, grid):
+    global Y, X
+    moveset = []
+    moveprob = []
+    if Y + 1 != 5:
+            moveset.append("s")
+            moveprob.append(Pgrid[Y+1,X])
+    if Y - 1 != -1:
+            moveset.append("w")
+            moveprob.append(Pgrid[Y-1,X])
+    if X + 1 != 5:
+            moveset.append("d")
+            moveprob.append(Pgrid[Y,X+1])
+    if X - 1 != -1:
+            moveset.append("a")
+            moveprob.append(Pgrid[Y,X-1])
+
+
+
+    move = random.choices(moveset, moveprob, k=1)[0]
+        
+    if move == "w" and Y-1 != -1:
+            Y -= 1
+    if move == "s" and Y+1 != 5:
+            Y += 1
+    if move == "a" and X-1 != -1:
+            X -= 1
+    if move == "d" and X+1 != 5:
+            X += 1
+
+
+        
+GridUp(Pgrid, grid)
+for Up in range(100):
+    Pcell = grid[Y,X]
+    Ghost(Pgrid, grid)
+    GridUp(Pgrid, grid)
+
+    time.sleep(0.2)
+    clear_output(wait=True)
+
+    grid[Y,X] = 5
+    print(grid)
+    print()
+    print(Pgrid)
+    grid[Y,X] = Pcell
