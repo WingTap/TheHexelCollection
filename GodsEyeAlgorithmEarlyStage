@@ -1,0 +1,128 @@
+from IPython.display import clear_output
+import numpy as np
+import random
+import time
+
+### The God's Eye Algorithm ###
+
+
+
+
+
+###GEA Progress###
+
+##Done
+#Possibility tracing
+#Cell probabilities
+#Path scoring
+#Multi-trace collection
+#Sorting: most probable first, Ranked
+#Threshold: cut below #% Prob
+
+
+##TODO
+#Probabilistic Movement Modifiers
+#ENV input, make it take any ENV not just the grid
+#Logic Chaining
+
+
+DTYPE = "int"
+GX = 10
+GY = 10
+
+X = 2
+Y = 2
+
+
+TY = 0
+TX = 0
+
+
+TrackC = 0
+PProb = 1
+
+moveC = ["w", "a", "s", "d"]
+moveW = [5, 5, 5, 5]
+TracePrime = {}
+CellTrace = {}
+CellProb = {}
+for row in range(GY):
+    for col in range(GX):
+        CellProb[(col, row)] = random.randint(0, 100)
+
+## Grid Up ##
+grid = np.zeros((GY,GX), DTYPE)
+grid[GY-1, GX-1] = 9
+
+
+for step in  range(10000):
+    clear_output(wait=True)
+    Pcell = grid[Y, X]
+    grid[Y, X] = 8
+    #print(grid)
+    grid[Y, X] = Pcell
+    if CellProb[(X,Y)] < 10:
+        CellTrace.update({f"Spot{step}": [(X, Y), CellProb[(X, Y)]]})
+    else:
+        CellTrace.update({f"Spot{step}": [(X, Y), CellProb[(X, Y)]]})
+    #print(CellTrace)
+
+    move = random.choices(moveC, weights=moveW, k=len(moveC))
+    move = move[0]
+    if move == "w" and Y-1 != -1:
+        Y -= 1
+    if move == "s" and Y+1 != GY:
+        Y += 1
+    if move == "a" and X-1 != -1:
+        X -= 1
+    if move == "d" and X+1 != GX:
+        X += 1
+
+
+    if TY > Y:
+        moveW[2] = 10
+        moveW[0] = 2
+    if TY < Y:
+        moveW[0] = 10
+        moveW[2] = 2
+    if TX > X:
+        moveW[3] = 10
+        moveW[1] = 2
+    if TX < X:
+        moveW[1] = 10
+        moveW[3] = 2
+    if TX == X and TY == Y:
+        TrackC += 1
+        for CellVal in CellTrace.values():
+            PProb *= CellVal[1] / 100
+        PProb = (PProb * 100)
+        #print(PProb)
+        TracePrime.update({f"Trace-{TrackC}": [CellTrace, PProb]})
+        PProb = 1
+        CellTrace = {}
+        clear_output()
+        #print(TracePrime)
+        X = 2
+        Y = 2
+    time.sleep(0)
+    
+        
+    
+clear_output()
+
+Tracers = []
+for Tracer in TracePrime:
+    Tracers.append(TracePrime[Tracer][1])
+    print()
+
+clear_output()
+print()
+print("Probability:", max(Tracers))
+for Tracer in TracePrime:
+    if (TracePrime[Tracer][1]) == max(Tracers):
+        print("Path:", TracePrime[Tracer][0])
+
+
+print("DeCode Fin")
+raise Exception("DeCode EXIT")
+
