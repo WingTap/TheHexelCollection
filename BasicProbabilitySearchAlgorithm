@@ -1,0 +1,63 @@
+from IPython.display import clear_output
+import numpy as np
+import random
+import time
+
+
+Kprob = {}
+SS = 0
+
+
+GY = 5
+GX = 5
+grid = np.zeros((GY,GX), (str,"U10"))
+for row in range(GY):
+    for col in range(GX):
+        grid[(col, row)] = str(random.randint(0, 100))
+
+
+X = 0
+Y = 0
+
+WP=50
+AP=50
+SP=50
+DP=50
+
+for step in range(10000):
+    Pcell = grid[Y,X]
+    grid[Y,X] = "P"
+    clear_output(wait=True)
+    #print(grid)
+    grid[Y,X] = Pcell
+
+    MoveC = (["w", "a", "s", "d"])
+    Wmove = ([WP, AP, SP, DP])
+    move = random.choices(MoveC, weights=Wmove, k=len(MoveC))
+    move = move[0]
+    
+    if move == "w" and Y-1 != -1:
+        Y -= 1
+    if move == "s" and Y+1 != GY:
+        Y += 1
+    if move == "a" and X-1 != -1:
+        X -= 1
+    if move == "d" and X+1 != GX:
+        X += 1
+    
+    #time.sleep(0.3)
+    
+    if X+1 != GX:
+        Kprob.update({(Y,X+1): int(grid[Y,X+1])})
+    if X-1 != -1:
+        Kprob.update({(Y,X-1): int(grid[Y,X-1])})
+    if Y+1 != GY:
+        Kprob.update({(Y+1,X): int(grid[Y+1,X])})
+    if Y-1 != -1:
+        Kprob.update({(Y-1,X): int(grid[Y-1,X])})
+
+    #time.sleep(0)
+clear_output()
+print(grid)
+print()
+print(Kprob)
