@@ -1,0 +1,87 @@
+import random
+
+
+Taggers = {
+#animalV
+"animalV":{
+"fishV": ["scales", "aquatic", "fins"],
+"ponyV": ["fur", "tail", "quadrupedal"],
+"bearV": ["fur", "tail", "quadrupedal"]
+},
+
+#badguyV
+"badguyV": {
+"politicanV": ["suit", "tie", "bidedal"],
+"policeV": ["bipedal", "armed","badge"],
+"robberV": ["bipedal", "human", "armed"],
+"fantasyV": {
+    "dragonV": ["scales", "tail", "bipedal"]
+    
+}
+},
+"unknownV": {
+    
+}
+}
+
+inputV = {
+  #inputV
+  "dogV": ["fur", "tail", "quadrupedal"],
+  "catV": ["quadrupedal", "fur", "tail"],
+  "robberV": ["human", "masked", "armed"],
+  "sharkV": ["skin", "aquatic", "fin"],
+  "frogV": ["skin", "quadrupedal", "green"],
+  "dragonV": ["wings", "quadrupedal", "tail"]
+}
+
+badguys = ["politicanV", "policeV", "robberV"]
+animals = ["fishV", "ponyV", "bearV"]
+
+TagList = {
+"animals": "animalV", 
+"badguys": "badguyV"
+}
+inputs = ["dogV", "catV", "robberV", "sharkV", "frogV", "dragonV"]
+
+def GetTraits(Activate):
+    for Activate2 in Activate.values():
+        if isinstance(Activate2, dict):
+            yield from GetTraits(Activate2)
+        else:
+            yield from Activate2
+
+def GetTagger(inputQ, inputQ2):
+  P = {}
+  for Activate in TagList.values():
+      for Activate3 in GetTraits(Taggers[Activate]):
+        for DeActivate in inputQ2:
+          if DeActivate == Activate3:
+            P[Activate] = P.get(Activate, 0) + 1
+
+  if P:
+    Set = max(P, key=P.get)
+    if list(P.values()).count(P[Set]) > 1:
+        Set = "unknownV"
+    print(Set, P)
+    Taggers[Set][inputQ] = inputQ2
+  return None
+
+
+def printout():
+    inputQ = random.choice(inputs)
+    inputQ2 = inputV[inputQ]
+    GetTagger(inputQ, inputQ2)
+
+    print(inputQ)
+    print(inputQ2)
+
+    print("")
+
+    print(Taggers)
+
+    print("")
+    print("")
+    print("")
+
+for _ in range(10):
+    printout()
