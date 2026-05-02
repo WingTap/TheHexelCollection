@@ -1,0 +1,33 @@
+from IPython.display import clear_output
+import numpy as np
+import random
+import time
+
+
+
+
+found = False
+finds = 0
+
+Hall = {
+    "left": {"left": "nothing", "middle": "nothing", "right": "nothing"},
+    "middle": {"left": "WIN", "middle": "nothing", "right": "nothing"},
+    "right": {"left": "nothing", "middle": "nothing", "right": "WIN"},
+}
+
+def search(layer, path="Hall"):
+    global finds
+    found = False
+    if isinstance(layer, dict):
+        for key, value in layer.items():
+            if search(value, f"{path}/{key}"):
+                found = True
+                
+    elif layer == "WIN":
+        print(f"{path}/ENTRY")
+        found = True
+        finds += 1
+    return found
+                
+if not search(Hall):
+    print("Nothing Found")
