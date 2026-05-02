@@ -1,0 +1,73 @@
+from IPython.display import clear_output
+import numpy as np
+import random
+
+#Misc
+panth = ""
+
+#Grid
+GY = 4
+GX = 4
+env = np.zeros((4,4), int)
+
+#Player
+X = 0
+Y = 0
+movelist = []
+
+#Ice
+env[1,1] = 2
+env[3,0] = 2
+env[1,3] = 2
+env[2,3] = 2
+
+#Box
+env[3,3] = 3
+
+#Best Moves
+BM = []
+
+#Logic
+for steps in range(10000):
+    
+    #Grid
+    Pcell = env[Y,X]
+    env[Y,X] = 1
+    clear_output(wait = True)
+    #print(env)
+    env[Y,X] = Pcell
+
+    #Move
+    moveset = ["w", "a", "s", "d"]
+    move = random.choice(moveset)
+    if move == "w" and Y-1 != -1:
+        Y -= 1
+        movelist.append("Up/")
+    if move == "s" and Y+1 != GY:
+        Y += 1
+        movelist.append("Down/")
+    if move == "a" and X-1 != -1:
+        X -= 1
+        movelist.append("Left/")
+    if move == "d" and X+1 != GX:
+        X += 1
+        movelist.append("Right/")
+        
+    #Fail
+    if env[Y,X] == 2:
+        Y, X = 0, 0
+        movelist = []
+    #Win
+    if env[Y,X] == 3:
+        BM.append(movelist)
+        Y, X = 0, 0
+        movelist = []
+
+
+#Sort To Small
+mini = min(BM, key=len)
+for word in mini:
+    panth += word
+print(env)
+print()
+print(panth)
